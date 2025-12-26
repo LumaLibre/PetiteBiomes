@@ -1,9 +1,10 @@
 package net.lumamc.biomes.model;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+
+import java.util.Objects;
 
 public record SimpleBlockLocation(/* transient */ World world, int x, int y, int z) {
 
@@ -16,7 +17,7 @@ public record SimpleBlockLocation(/* transient */ World world, int x, int y, int
     }
 
     public boolean matchesBlock(Block block) {
-        return block.getWorld().getName().equals(world.getName())
+        return Objects.equals(block.getWorld(), world)
                 && block.getX() == x
                 && block.getY() == y
                 && block.getZ() == z;

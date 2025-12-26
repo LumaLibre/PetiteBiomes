@@ -1,6 +1,7 @@
 package net.lumamc.biomes.util;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import lombok.NoArgsConstructor;
 import net.lumamc.biomes.PetiteBiomes;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
@@ -8,6 +9,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@NoArgsConstructor
 public final class Executors {
 
     private static final PetiteBiomes PLUGIN = PetiteBiomes.instance();
@@ -45,7 +47,6 @@ public final class Executors {
         return Bukkit.getScheduler().runTaskLater(PLUGIN, runnable, delay);
     }
 
-    // TODO: Better logging
     public static BukkitTask sync(Runnable runnable) {
         return Bukkit.getScheduler().runTask(PLUGIN, () -> {
             try {

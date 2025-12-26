@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("com.gradleup.shadow") version "9.3.0"
     id("io.freefair.lombok") version "9.1.0"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 group = "net.lumamc.biomes"
@@ -17,9 +18,9 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:5.0.5")
-    implementation("me.outspending.biomesapi:BiomesAPI:0.0.9")
+    implementation("me.outspending.biomesapi:BiomesAPI:0.0.14")
     implementation("com.zaxxer:HikariCP:6.3.0")
-    implementation("com.jeff-media:custom-block-data:2.2.4")
+    //implementation("com.jeff-media:custom-block-data:2.2.4")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -30,22 +31,31 @@ tasks {
     test {
         useJUnitPlatform()
     }
+//
+//    jar {
+//        enabled = false
+//    }
+//
+//    build {
+//        dependsOn(shadowJar)
+//    }
 
-    jar {
-        enabled = false
+//    shadowJar {
+//        val shaded = "net.lumamc.biomes.shaded"
+//        relocate("eu.okaeri", "$shaded.okaeri")
+//        relocate("com.zaxxer.hikari", "$shaded.hikari")
+//        relocate("me.outspending", "$shaded.biomesapi")
+//        //relocate("com.jeff-media", "$shaded.customblockdata")
+//        archiveClassifier.set("")
+//    }
+
+    runServer {
+        minecraftVersion("1.21.11")
     }
 
-    build {
-        dependsOn(shadowJar)
-    }
+}
 
-    shadowJar {
-        val shaded = "net.lumamc.biomes.shaded"
-        relocate("eu.okaeri", "$shaded.okaeri")
-        relocate("com.zaxxer.hikari", "$shaded.hikari")
-        relocate("me.outspending", "$shaded.biomesapi")
-        relocate("com.jeff-media", "$shaded.customblockdata")
-        archiveClassifier.set("")
-    }
 
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
