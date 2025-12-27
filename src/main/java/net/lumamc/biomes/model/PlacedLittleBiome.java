@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.outspending.biomesapi.registry.BiomeResourceKey;
-import net.lumamc.biomes.PetiteBiomes;
+import net.lumamc.biomes.LittleBiomes;
 import net.lumamc.biomes.configuration.OkaeriLittleBiome;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -43,7 +43,7 @@ public class PlacedLittleBiome {
         KeyedData.ANCHOR_BLOCK.set(chunk, simpleBlockLocation.serialize());
         KeyedData.CHUNK_BIOME.set(chunk, this.biomeKey.toString());
 
-        PetiteBiomes.debug("Placed little biome %s at chunk (%d, %d) in world %s with anchor at %s".formatted(
+        LittleBiomes.debug("Placed little biome %s at chunk (%d, %d) in world %s with anchor at %s".formatted(
                 this.biomeKey,
                 chunk.getX(),
                 chunk.getZ(),
@@ -59,7 +59,7 @@ public class PlacedLittleBiome {
         KeyedData.ANCHOR_BLOCK.remove(chunk);
         KeyedData.CHUNK_BIOME.remove(chunk);
 
-        PetiteBiomes.debug("Removed little biome from chunk (%d, %d) in world %s".formatted(
+        LittleBiomes.debug("Removed little biome from chunk (%d, %d) in world %s".formatted(
                 chunk.getX(),
                 chunk.getZ(),
                 chunk.getWorld().getName()
@@ -67,7 +67,7 @@ public class PlacedLittleBiome {
     }
 
     public ItemStack anchorItemStack() {
-        OkaeriLittleBiome littleBiomeConfig = PetiteBiomes.okaeriConfig().getLittleBiomeByName(this.name());
+        OkaeriLittleBiome littleBiomeConfig = LittleBiomes.okaeriConfig().getLittleBiomeByName(this.name());
         Preconditions.checkNotNull(littleBiomeConfig, "No little biome config found for biome key: " + this.biomeKey);
 
         return littleBiomeConfig.anchorItem();

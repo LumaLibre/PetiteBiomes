@@ -3,7 +3,7 @@ package net.lumamc.biomes.events;
 import com.google.common.base.Preconditions;
 import me.outspending.biomesapi.BiomeUpdater;
 import me.outspending.biomesapi.registry.BiomeResourceKey;
-import net.lumamc.biomes.PetiteBiomes;
+import net.lumamc.biomes.LittleBiomes;
 import net.lumamc.biomes.model.CachedLittleBiomes;
 import net.lumamc.biomes.model.KeyedData;
 import net.lumamc.biomes.model.PlacedLittleBiome;
@@ -27,8 +27,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
-
-import static net.lumamc.biomes.PetiteBiomes.PETITE_BIOME_NAMESPACE;
 
 public class BlockListeners implements Listener {
 
@@ -66,7 +64,7 @@ public class BlockListeners implements Listener {
             block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), placedLittleBiome.anchorItemStack());
         }
 
-        int radius = PetiteBiomes.okaeriConfig().anchorBiomeRadius();
+        int radius = LittleBiomes.okaeriConfig().anchorBiomeRadius();
         BIOME_UPDATER.updateChunkRadius(chunk, radius);
     }
 
@@ -95,7 +93,7 @@ public class BlockListeners implements Listener {
         WorldTiedChunkLocation worldTiedChunkLocation = WorldTiedChunkLocation.of(block.getChunk());
         CachedLittleBiomes.INSTANCE.cacheChunk(worldTiedChunkLocation, biomeResourceKey);
 
-        int radius = PetiteBiomes.okaeriConfig().anchorBiomeRadius();
+        int radius = LittleBiomes.okaeriConfig().anchorBiomeRadius();
         BIOME_UPDATER.updateChunkRadius(block.getChunk(), radius);
     }
 
@@ -127,7 +125,7 @@ public class BlockListeners implements Listener {
             return; // Chunk does not have an anchor in it
         }
 
-        Set<Material> checkBlockPhysMaterials = PetiteBiomes.okaeriConfig().checkBlockPhysAnchorMaterials();
+        Set<Material> checkBlockPhysMaterials = LittleBiomes.okaeriConfig().checkBlockPhysAnchorMaterials();
         if (!checkBlockPhysMaterials.contains(block.getType())) {
             return; // Not a material we care about
         }
@@ -152,7 +150,7 @@ public class BlockListeners implements Listener {
         event.setCancelled(true); // Prevent physics updates on the anchor block
 
 
-        int radius = PetiteBiomes.okaeriConfig().anchorBiomeRadius();
+        int radius = LittleBiomes.okaeriConfig().anchorBiomeRadius();
         BIOME_UPDATER.updateChunkRadius(chunk, radius);
     }
 

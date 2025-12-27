@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class NearestAnchorCommand implements Subcommand {
     @Override
@@ -66,7 +65,7 @@ public class NearestAnchorCommand implements Subcommand {
     public Options options() {
         return Options.builder()
                 .label("nearestanchor")
-                .permission("petitebiomes.command.nearestanchor")
+                .permission("littlebiomes.command.nearestanchor")
                 .playerOnly(true)
                 .usage("/<command> nearestanchor <radius>")
                 .build();

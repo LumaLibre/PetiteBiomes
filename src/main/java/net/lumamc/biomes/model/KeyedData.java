@@ -1,6 +1,6 @@
 package net.lumamc.biomes.model;
 
-import net.lumamc.biomes.PetiteBiomes;
+import net.lumamc.biomes.LittleBiomes;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataHolder;
@@ -23,7 +23,7 @@ public final class KeyedData<V> {
         this.type = type;
     }
     public KeyedData(String key, PersistentDataType<V, V> type) {
-        this(new NamespacedKey(PetiteBiomes.instance(), key), type);
+        this(new NamespacedKey(LittleBiomes.instance(), key), type);
     }
 
 

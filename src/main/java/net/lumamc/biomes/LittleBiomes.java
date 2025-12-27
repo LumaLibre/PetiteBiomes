@@ -12,6 +12,7 @@ import net.lumamc.biomes.commands.CommandManager;
 import net.lumamc.biomes.configuration.Config;
 import net.lumamc.biomes.events.BlockListeners;
 import net.lumamc.biomes.events.ChunkListeners;
+import net.lumamc.biomes.events.BadRegistryPrevention;
 import net.lumamc.biomes.model.CachedLittleBiomes;
 import net.lumamc.biomes.model.KeyedData;
 import net.lumamc.biomes.model.SimpleBlockLocation;
@@ -26,12 +27,12 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 @Accessors(fluent = true)
-public final class PetiteBiomes extends JavaPlugin {
+public final class LittleBiomes extends JavaPlugin {
 
-    public static final String PETITE_BIOME_NAMESPACE = "petitebiomes";
+    public static final String LITTLE_BIOME_NAMESPACE = "littlebiomes";
 
     @Getter
-    private static PetiteBiomes instance;
+    private static LittleBiomes instance;
     @Getter
     private static PacketHandler packetHandler;
     @Getter
@@ -40,7 +41,7 @@ public final class PetiteBiomes extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        packetHandler = PacketHandler.of(this, PacketHandler.Priority.HIGH);
+        packetHandler = PacketHandler.of(this, PacketHandler.Manipulator.PROTOCOLLIB, PacketHandler.Priority.HIGH);
         okaeriConfig = loadConfig(Config.class, "config.yml");
     }
 
@@ -56,33 +57,10 @@ public final class PetiteBiomes extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new BlockListeners(), this);
         getServer().getPluginManager().registerEvents(new ChunkListeners(), this);
-        getCommand("petitebiomes").setExecutor(new CommandManager());
+        getServer().getPluginManager().registerEvents(new BadRegistryPrevention(), this);
+        getCommand("littlebiomes").setExecutor(new CommandManager());
 
-
-        // TODO: where to put this?
-        Executors.runRepeatingAsync(1, TimeUnit.SECONDS, task -> {
-            for (WorldTiedChunkLocation worldTiedChunkLocation : CachedLittleBiomes.INSTANCE.getCachedChunks()) {
-                Chunk chunk = worldTiedChunkLocation.toBukkitChunk();
-                if (!chunk.isLoaded()) {
-                    Executors.sync(() -> {
-                        CachedLittleBiomes.INSTANCE.uncacheChunk(worldTiedChunkLocation);
-                        debug("Uncached chunk at %s in world %s because it was unloaded?".formatted(
-                                worldTiedChunkLocation.chunkX() + "," + worldTiedChunkLocation.chunkZ(),
-                                worldTiedChunkLocation.world().getName()
-                        ));
-                    });
-                    continue;
-                }
-
-                String serializedAnchorLocation = Preconditions.checkNotNull(KeyedData.ANCHOR_BLOCK.get(chunk), "Expected to find anchor block data for chunk (%d, %d) in world %s".formatted(
-                        chunk.getX(), chunk.getZ(), chunk.getWorld().getName()
-                ));
-
-                SimpleBlockLocation anchorLocation = SimpleBlockLocation.fromSerialized(serializedAnchorLocation, chunk.getWorld());
-                Location location = anchorLocation.toLocation().toCenterLocation();
-                location.getWorld().spawnParticle(Particle.END_ROD, location, 3, 0.3, 0.3, 0.3, 0.01);
-            }
-        });
+        this.anchorParticlesTask();
     }
 
     @Override
@@ -105,7 +83,41 @@ public final class PetiteBiomes extends JavaPlugin {
     }
 
 
+
+    // TODO: temporarily here
+    public void anchorParticlesTask() {
+        Executors.runRepeatingAsync(1, TimeUnit.SECONDS, task -> {
+            for (WorldTiedChunkLocation worldTiedChunkLocation : CachedLittleBiomes.INSTANCE.getCachedChunks()) {
+                Chunk chunk = worldTiedChunkLocation.toBukkitChunk();
+                if (!chunk.isLoaded()) {
+                    Executors.sync(() -> {
+                        CachedLittleBiomes.INSTANCE.uncacheChunk(worldTiedChunkLocation);
+                        debug("Uncached chunk at %s in world %s because it was unloaded?".formatted(
+                                worldTiedChunkLocation.chunkX() + "," + worldTiedChunkLocation.chunkZ(),
+                                worldTiedChunkLocation.world().getName()
+                        ));
+                    });
+                    continue;
+                }
+
+                String serializedAnchorLocation = Preconditions.checkNotNull(KeyedData.ANCHOR_BLOCK.get(chunk), "Expected to find anchor block data for chunk (%d, %d) in world %s".formatted(
+                        chunk.getX(), chunk.getZ(), chunk.getWorld().getName()
+                ));
+
+                SimpleBlockLocation anchorLocation = SimpleBlockLocation.fromSerialized(serializedAnchorLocation, chunk.getWorld());
+                Location location = anchorLocation.toLocation().toCenterLocation();
+                Particle particle = okaeriConfig.anchorParticle();
+                if (particle != null) {
+                    location.getWorld().spawnParticle(particle, location, 3, 0.3, 0.3, 0.3, 0.01);
+                }
+            }
+        });
+    }
+
+
     public static void debug(String message) {
-        instance.getLogger().info("[DEBUG] " + message);
+        if (okaeriConfig.debug()) {
+            instance.getLogger().info("[DEBUG] " + message);
+        }
     }
 }

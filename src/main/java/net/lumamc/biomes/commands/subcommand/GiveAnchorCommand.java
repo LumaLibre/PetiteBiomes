@@ -1,7 +1,7 @@
 package net.lumamc.biomes.commands.subcommand;
 
 import com.google.common.base.Preconditions;
-import net.lumamc.biomes.PetiteBiomes;
+import net.lumamc.biomes.LittleBiomes;
 import net.lumamc.biomes.commands.Subcommand;
 import net.lumamc.biomes.configuration.OkaeriLittleBiome;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ public class GiveAnchorCommand implements Subcommand {
         }
         String biomeName = Preconditions.checkNotNull(args.getFirst(), "You must provide a biome name.");
 
-        OkaeriLittleBiome okaeriLittleBiome =  PetiteBiomes.okaeriConfig().getLittleBiomeByName(biomeName);
+        OkaeriLittleBiome okaeriLittleBiome =  LittleBiomes.okaeriConfig().getLittleBiomeByName(biomeName);
         Preconditions.checkNotNull(okaeriLittleBiome, "No little biome found with name: " + biomeName);
 
         Player player = (Player) sender;
@@ -27,7 +27,7 @@ public class GiveAnchorCommand implements Subcommand {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String label, List<String> args) {
-        return PetiteBiomes.okaeriConfig().littleBiomes().stream()
+        return LittleBiomes.okaeriConfig().littleBiomes().stream()
                 .map(OkaeriLittleBiome::name)
                 .toList();
     }
@@ -36,7 +36,7 @@ public class GiveAnchorCommand implements Subcommand {
     public Options options() {
         return Options.builder()
                 .label("giveanchor")
-                .permission("petitebiomes.command.giveanchor")
+                .permission("littlebiomes.command.giveanchor")
                 .playerOnly(true)
                 .usage("/<command> give <biome> [amount]")
                 .build();

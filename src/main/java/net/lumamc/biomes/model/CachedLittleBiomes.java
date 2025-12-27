@@ -1,7 +1,7 @@
 package net.lumamc.biomes.model;
 
 import me.outspending.biomesapi.registry.BiomeResourceKey;
-import net.lumamc.biomes.PetiteBiomes;
+import net.lumamc.biomes.LittleBiomes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public final class CachedLittleBiomes {
     }
 
     public boolean isWithinRadiusOfCachedChunk(WorldTiedChunkLocation chunk, BiomeResourceKey biomeKey) {
-        int radius = PetiteBiomes.okaeriConfig().anchorBiomeRadius();
+        int radius = LittleBiomes.okaeriConfig().anchorBiomeRadius();
 
         for (var entry : cachedChunkLocations.entrySet()) {
             WorldTiedChunkLocation cachedLocation = entry.getKey();
@@ -44,12 +44,12 @@ public final class CachedLittleBiomes {
 
     public void cacheChunk(WorldTiedChunkLocation location, BiomeResourceKey biomeKey) {
         cachedChunkLocations.put(location, biomeKey);
-        PetiteBiomes.debug("Cached new chunk, size: %d".formatted(cachedChunkLocations.size()));
+        LittleBiomes.debug("Cached new chunk, size: %d".formatted(cachedChunkLocations.size()));
     }
 
     public void uncacheChunk(WorldTiedChunkLocation location) {
         cachedChunkLocations.remove(location);
-        PetiteBiomes.debug("Uncached chunk, size: %d".formatted(cachedChunkLocations.size()));
+        LittleBiomes.debug("Uncached chunk, size: %d".formatted(cachedChunkLocations.size()));
     }
 
     public Set<WorldTiedChunkLocation> getCachedChunks() {

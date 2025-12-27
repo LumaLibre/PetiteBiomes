@@ -1,28 +1,38 @@
 package net.lumamc.biomes.commands.subcommand;
 
-import net.lumamc.biomes.PetiteBiomes;
+import net.lumamc.biomes.LittleBiomes;
 import net.lumamc.biomes.commands.Subcommand;
 import net.lumamc.biomes.configuration.Config;
 import net.lumamc.biomes.configuration.OkaeriLittleBiome;
+import net.lumamc.biomes.events.BadRegistryPrevention;
 import net.lumamc.biomes.util.TextUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ReloadCommand implements Subcommand {
     @Override
     public boolean execute(CommandSender sender, String label, List<String> args) {
-        Config config = PetiteBiomes.okaeriConfig();
+        Config config = LittleBiomes.okaeriConfig();
         config.load(true);
+
+        List<UUID> playerUUIDs = Bukkit.getOnlinePlayers().stream()
+                .map(Entity::getUniqueId)
+                .toList();
 
         for (OkaeriLittleBiome okaeriLittleBiome : config.littleBiomes()) {
             if (okaeriLittleBiome.isRegistered()) {
                 okaeriLittleBiome.modify();
             } else {
                 okaeriLittleBiome.register();
+                okaeriLittleBiome.addToPacketHandler();
+                BadRegistryPrevention.populate(okaeriLittleBiome.biomeResourceKey(), playerUUIDs);
             }
         }
-        TextUtil.msg(sender, "PetiteBiomes configuration reloaded.");
+        TextUtil.msg(sender, "LittleBiomes configuration reloaded. Relogging is required to see biome changes.");
         return true;
     }
 
@@ -35,7 +45,7 @@ public class ReloadCommand implements Subcommand {
     public Options options() {
         return Options.builder()
                 .label("reload")
-                .permission("petitebiomes.command.reload")
+                .permission("littlebiomes.command.reload")
                 .playerOnly(false)
                 .usage("/<command> reload")
                 .build();

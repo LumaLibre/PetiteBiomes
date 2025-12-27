@@ -1,10 +1,10 @@
-name: PetiteBiomes
-main: net.lumamc.biomes.PetiteBiomes
+name: LittleBiomes
+main: net.lumamc.biomes.LittleBiomes
 version: '1.0-SNAPSHOT'
 api-version: 1.21
 depend:
   - ProtocolLib
 commands:
-  petitebiomes:
-    description: Main command for PetiteBiomes plugin.
+  littlebiomes:
+    description: Main command for LittleBiomes plugin.
     usage: /<command>

@@ -1,1 +1,1 @@
-rootProject.name = "PetiteBiomes"
+rootProject.name = "LittleBiomes"

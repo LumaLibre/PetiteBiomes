@@ -2,7 +2,7 @@ package net.lumamc.biomes.util;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import lombok.NoArgsConstructor;
-import net.lumamc.biomes.PetiteBiomes;
+import net.lumamc.biomes.LittleBiomes;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 @NoArgsConstructor
 public final class Executors {
 
-    private static final PetiteBiomes PLUGIN = PetiteBiomes.instance();
+    private static final LittleBiomes PLUGIN = LittleBiomes.instance();
 
     public static ScheduledTask runRepeatingAsync(long delay, long period, TimeUnit timeUnit, Consumer<ScheduledTask> consumer) {
         return Bukkit.getAsyncScheduler().runAtFixedRate(PLUGIN, consumer, delay, period, timeUnit);
