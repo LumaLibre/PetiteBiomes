@@ -30,14 +30,22 @@ public class CommandManager implements TabExecutor {
 
         String subcommandLabel = args[0];
         for (Subcommand subcommand : subcommands) {
-            if (!subcommand.options().label().equalsIgnoreCase(subcommandLabel)) {
+            Subcommand.Options options = subcommand.options();
+
+            if (!options.label().equalsIgnoreCase(subcommandLabel)) {
                 continue;
+            } else if (options.playerOnly() && !(sender instanceof org.bukkit.entity.Player)) {
+                TextUtil.msg(sender, "This command can only be executed by a player.");
+                return true;
+            } else if (options.permission() != null && !options.permission().isEmpty() && !sender.hasPermission(options.permission())) {
+                TextUtil.msg(sender, "You do not have permission to execute this command.");
+                return true;
             }
 
             List<String> subArgs = args.length > 1 ? List.of(args).subList(1, args.length) : List.of();
             boolean value = subcommand.execute(sender, label, subArgs);
             if (!value) {
-                TextUtil.msg(sender, "Usage: " + subcommand.options().usage().replace("<command>", label));
+                TextUtil.msg(sender, "Usage: " + options.usage().replace("<command>", label));
             }
             return true;
         }
@@ -56,8 +64,11 @@ public class CommandManager implements TabExecutor {
 
         String subcommandLabel = args[0];
         for (Subcommand subcommand : subcommands) {
-            if (!subcommand.options().label().equalsIgnoreCase(subcommandLabel)) {
+            Subcommand.Options options = subcommand.options();
+            if (!options.label().equalsIgnoreCase(subcommandLabel)) {
                 continue;
+            } else if (options.permission() != null && !sender.hasPermission(options.permission())) {
+                return null;
             }
 
             List<String> subArgs = args.length > 2 ? List.of(args).subList(1, args.length) : List.of();
