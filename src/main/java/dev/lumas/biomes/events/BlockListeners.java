@@ -82,6 +82,16 @@ public class BlockListeners implements Listener {
             event.setCancelled(true);
             return;
         }
+
+        // Check if the chunk already has a little biome
+        Chunk chunk = block.getChunk();
+        if (KeyedData.CHUNK_BIOME.matches(chunk)) {
+            event.getPlayer().sendMessage("This chunk already has a little biome assigned.");
+            event.setCancelled(true);
+            return;
+        }
+
+
         SimpleBlockLocation simpleBlockLocation = SimpleBlockLocation.of(block.getWorld(), block.getX(), block.getY(), block.getZ());
 
         String biomeResourceKeyString = Preconditions.checkNotNull(KeyedData.ANCHOR.get(itemStack), "Expected biome name in anchor item stack.");
