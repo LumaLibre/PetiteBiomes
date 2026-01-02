@@ -18,12 +18,17 @@ import dev.lumas.biomes.model.KeyedData;
 import dev.lumas.biomes.model.SimpleBlockLocation;
 import dev.lumas.biomes.model.WorldTiedChunkLocation;
 import dev.lumas.biomes.util.Executors;
+import me.outspending.biomesapi.registry.BiomeResourceKey;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Accessors(fluent = true)
@@ -41,25 +46,28 @@ public final class LittleBiomes extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        packetHandler = PacketHandler.of(this, PacketHandler.Manipulator.PROTOCOLLIB, PacketHandler.Priority.HIGH);
         okaeriConfig = loadConfig(Config.class, "config.yml");
+        packetHandler = PacketHandler.of(this, PacketHandler.Manipulator.PROTOCOLLIB, PacketHandler.Priority.HIGHEST);
     }
 
 
     @Override
     public void onEnable() {
-        packetHandler.register();
-
-        okaeriConfig.littleBiomes().forEach(okaeriLittleBiome -> {
-            okaeriLittleBiome.register();
-            okaeriLittleBiome.addToPacketHandler();
-        });
-
         getServer().getPluginManager().registerEvents(new BlockListeners(), this);
         getServer().getPluginManager().registerEvents(new ChunkListeners(), this);
         getServer().getPluginManager().registerEvents(new BadRegistryPrevention(), this);
         getCommand("littlebiomes").setExecutor(new CommandManager());
 
+
+        Executors.delayedSync(1, () -> {
+            okaeriConfig.littleBiomes().forEach(okaeriLittleBiome -> {
+                okaeriLittleBiome.register();
+                okaeriLittleBiome.addToPacketHandler();
+            });
+            packetHandler.register();
+        });
+
+        this.loadExistingChunks();
         this.anchorParticlesTask();
     }
 
@@ -85,7 +93,7 @@ public final class LittleBiomes extends JavaPlugin {
 
 
     // TODO: temporarily here
-    public void anchorParticlesTask() {
+    private void anchorParticlesTask() {
         Executors.runRepeatingAsync(1, TimeUnit.SECONDS, task -> {
             for (WorldTiedChunkLocation worldTiedChunkLocation : CachedLittleBiomes.INSTANCE.getCachedChunks()) {
                 Chunk chunk = worldTiedChunkLocation.toBukkitChunk();
@@ -112,6 +120,41 @@ public final class LittleBiomes extends JavaPlugin {
                 }
             }
         });
+    }
+
+    private void loadExistingChunks() {
+        List<Chunk> chunks = new ArrayList<>();
+        for (Player player : getServer().getOnlinePlayers()) {
+            int viewDistance = player.getViewDistance();
+            Location playerLocation = player.getLocation();
+            World world = player.getWorld();
+
+            int playerChunkX = playerLocation.getBlockX() >> 4;
+            int playerChunkZ = playerLocation.getBlockZ() >> 4;
+            for (int x = playerChunkX - viewDistance; x <= playerChunkX + viewDistance; x++) {
+                for (int z = playerChunkZ - viewDistance; z <= playerChunkZ + viewDistance; z++) {
+                    chunks.add(world.getChunkAt(x, z, false));
+                }
+            }
+        }
+
+        for (Chunk chunk : chunks) {
+            if (!KeyedData.CHUNK_BIOME.matches(chunk)) {
+                continue;
+            }
+
+            WorldTiedChunkLocation worldTiedChunkLocation = WorldTiedChunkLocation.of(chunk);
+            String biomeKeyString = Preconditions.checkNotNull(KeyedData.CHUNK_BIOME.get(chunk), "Expected to find biome key for chunk (%d, %d) in world %s".formatted(
+                    chunk.getX(), chunk.getZ(), chunk.getWorld().getName()
+            ));
+
+            BiomeResourceKey biomeKey = BiomeResourceKey.fromString(biomeKeyString);
+            CachedLittleBiomes.INSTANCE.cacheChunk(worldTiedChunkLocation, biomeKey);
+            debug("Cached chunk at %s in world %s on startup.".formatted(
+                    worldTiedChunkLocation.chunkX() + "," + worldTiedChunkLocation.chunkZ(),
+                    worldTiedChunkLocation.world().getName()
+            ));
+        }
     }
 
 

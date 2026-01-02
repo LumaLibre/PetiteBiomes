@@ -19,7 +19,7 @@ repositories {
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:5.0.5")
-    implementation("me.outspending.biomesapi:BiomesAPI:0.0.20")
+    implementation("me.outspending.biomesapi:BiomesAPI:0.0.22")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -48,6 +48,9 @@ tasks {
 
     runServer {
         minecraftVersion("1.21.11")
+        downloadPlugins {
+            modrinth("plugmanx", "3.0.2")
+        }
     }
 
 }

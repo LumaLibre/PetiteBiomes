@@ -17,19 +17,8 @@ import java.util.Set;
 @Accessors(fluent = true)
 public class Config extends OkaeriConfig {
 
-    @Nullable
-    public OkaeriLittleBiome getLittleBiomeByName(String name) {
-        return littleBiomes.stream()
-                .filter(biome -> biome.name().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
-    }
-
     @Comment("Enable debug logging.")
     private boolean debug = true;
-
-    @Comment("Priority for the ProtocolLib-based PacketHandler used by LittleBiomes. Requires a server restart to take effect.")
-    private PacketHandler.Priority packetHandlerPriority = PacketHandler.Priority.HIGH;
 
     @Comment("Materials that should be checked for BlockPhysicsEvent.")
     private Set<Material> checkBlockPhysAnchorMaterials = Set.of(Material.ANVIL);
@@ -68,4 +57,12 @@ public class Config extends OkaeriConfig {
     );
 
 
+
+    @Nullable
+    public OkaeriLittleBiome getLittleBiomeByName(String name) {
+        return littleBiomes.stream()
+                .filter(biome -> biome.name().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
 }

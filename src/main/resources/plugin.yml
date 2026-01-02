@@ -2,8 +2,10 @@ name: LittleBiomes
 main: dev.lumas.biomes.LittleBiomes
 version: '1.0-SNAPSHOT'
 api-version: 1.21
-depend:
+softdepend:
   - ProtocolLib
+  - PacketEvents
+  - RealisticSeasons
 commands:
   littlebiomes:
     description: Main command for LittleBiomes plugin.
