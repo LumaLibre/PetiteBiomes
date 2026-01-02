@@ -1,5 +1,6 @@
 package dev.lumas.biomes.events;
 
+import me.outspending.biomesapi.biome.BiomeHandler;
 import me.outspending.biomesapi.registry.BiomeResourceKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,7 @@ public class BadRegistryPrevention implements Listener {
 
     // lazy disconnect prevention when admins reload
 
-    private static Map<BiomeResourceKey, List<UUID>> recentlyRegistered = new HashMap<>();
+    private static final Map<BiomeResourceKey, List<UUID>> recentlyRegistered = new HashMap<>();
 
 
     public static void populate(BiomeResourceKey biomeKey, Collection<UUID> playerUUIDs) {
@@ -28,7 +29,7 @@ public class BadRegistryPrevention implements Listener {
     }
 
     public static boolean shouldPrevent(BiomeResourceKey biomeKey, Player player) {
-        if (!recentlyRegistered.containsKey(biomeKey)) {
+        if (!recentlyRegistered.containsKey(biomeKey) || !BiomeHandler.isBiome(biomeKey)) {
             return false;
         }
         List<UUID> uuidList = recentlyRegistered.get(biomeKey);

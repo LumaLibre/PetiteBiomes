@@ -4,6 +4,7 @@ import eu.okaeri.configs.OkaeriConfig;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.outspending.biomesapi.BiomeSettings;
+import me.outspending.biomesapi.GrassColorModifier;
 import me.outspending.biomesapi.biome.BiomeHandler;
 import me.outspending.biomesapi.biome.CustomBiome;
 import me.outspending.biomesapi.packet.PacketHandler;
@@ -44,6 +45,7 @@ public class OkaeriLittleBiome extends OkaeriConfig {
     private String skyColor;
     private String foliageColor;
     private String grassColor;
+    private GrassColorModifier grassColorModifier;
     private PacketHandler.Priority biomePriority;
     private Map<AmbientParticle, Float> ambientParticles;
     private Map<Material, Material> blockReplacements;
@@ -163,6 +165,7 @@ public class OkaeriLittleBiome extends OkaeriConfig {
         private String anchorDisplayName;
         private List<String> anchorLore;
         private String color;
+        private GrassColorModifier grassColorModifier = GrassColorModifier.NONE;
         private Map<AmbientParticle, Float> ambientParticles = new HashMap<>();
         private Map<Material, Material> blockReplacements = new HashMap<>();
 
@@ -215,6 +218,7 @@ public class OkaeriLittleBiome extends OkaeriConfig {
             config.skyColor = this.color;
             config.foliageColor = this.color;
             config.grassColor = this.color;
+            config.grassColorModifier = this.grassColorModifier;
             config.biomePriority = PacketHandler.Priority.NORMAL;
             config.ambientParticles = this.ambientParticles;
             config.blockReplacements = this.blockReplacements;
