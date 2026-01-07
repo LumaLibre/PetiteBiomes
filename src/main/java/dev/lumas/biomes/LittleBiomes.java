@@ -61,8 +61,13 @@ public final class LittleBiomes extends JavaPlugin {
 
         Executors.delayedSync(1, () -> {
             okaeriConfig.littleBiomes().forEach(okaeriLittleBiome -> {
-                okaeriLittleBiome.register();
-                okaeriLittleBiome.addToPacketHandler();
+                try {
+                    okaeriLittleBiome.register();
+                    okaeriLittleBiome.addToPacketHandler();
+                } catch (Exception e) {
+                    getLogger().severe("Failed to register little biome: " + okaeriLittleBiome.name());
+                    e.printStackTrace();
+                }
             });
             packetHandler.register();
         });
