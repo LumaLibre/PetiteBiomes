@@ -4,7 +4,7 @@ import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import me.outspending.biomesapi.wrapper.AmbientParticle;
+import me.outspending.biomesapi.wrapper.environment.AmbientParticle;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.Nullable;
