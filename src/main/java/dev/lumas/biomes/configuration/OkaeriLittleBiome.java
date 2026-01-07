@@ -1,5 +1,6 @@
 package dev.lumas.biomes.configuration;
 
+import dev.lumas.biomes.model.WorldGuardHook;
 import eu.okaeri.configs.OkaeriConfig;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -129,7 +130,17 @@ public class OkaeriLittleBiome extends OkaeriConfig {
                     }
 
                     WorldTiedChunkLocation worldTiedChunkLocation = WorldTiedChunkLocation.of(player.getWorld(), chunkLocation);
-                    return CachedLittleBiomes.INSTANCE.isChunkCached(worldTiedChunkLocation, biomeResourceKey) || CachedLittleBiomes.INSTANCE.isWithinRadiusOfCachedChunk(worldTiedChunkLocation, biomeResourceKey);
+                    if (CachedLittleBiomes.INSTANCE.isChunkCached(worldTiedChunkLocation, biomeResourceKey) || CachedLittleBiomes.INSTANCE.isWithinRadiusOfCachedChunk(worldTiedChunkLocation, biomeResourceKey)) {
+                        return true;
+                    }
+
+                    WorldGuardHook worldGuardHook = LittleBiomes.worldGuardHook();
+                    if (worldGuardHook == null) {
+                        return false;
+                    }
+
+                    String worldguardRegionLittleBiomeName = worldGuardHook.getWorldGuardRegionLittleBiomeName(worldTiedChunkLocation);
+                    return biomeResourceKey.key().value().equalsIgnoreCase(worldguardRegionLittleBiomeName);
                 })
                 .build();
 

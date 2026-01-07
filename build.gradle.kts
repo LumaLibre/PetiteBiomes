@@ -14,12 +14,15 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://storehouse.okaeri.eu/repository/maven-public/")
     maven("https://repo.jsinco.dev/releases")
+    maven("https://maven.enginehub.org/repo/")
 }
 
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:5.0.5")
     implementation("me.outspending.biomesapi:BiomesAPI:1.1.0-2ad3b5b")
+
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-beta1")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

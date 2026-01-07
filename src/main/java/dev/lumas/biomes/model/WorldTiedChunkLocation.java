@@ -2,6 +2,7 @@ package dev.lumas.biomes.model;
 
 import me.outspending.biomesapi.packet.data.ChunkLocation;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 
 public record WorldTiedChunkLocation(World world, int chunkX, int chunkZ) {
@@ -20,5 +21,9 @@ public record WorldTiedChunkLocation(World world, int chunkX, int chunkZ) {
 
     public Chunk toBukkitChunk() {
         return world.getChunkAt(chunkX, chunkZ);
+    }
+
+    public Location toLocation() {
+        return new Location(world, chunkX << 4, 0, chunkZ << 4);
     }
 }

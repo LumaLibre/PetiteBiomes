@@ -1,6 +1,7 @@
 package dev.lumas.biomes;
 
 import com.google.common.base.Preconditions;
+import dev.lumas.biomes.model.WorldGuardHook;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.serdes.standard.StandardSerdes;
@@ -42,12 +43,19 @@ public final class LittleBiomes extends JavaPlugin {
     private static PacketHandler packetHandler;
     @Getter
     private static Config okaeriConfig;
+    @Getter
+    private static WorldGuardHook worldGuardHook;
 
     @Override
     public void onLoad() {
         instance = this;
         okaeriConfig = loadConfig(Config.class, "config.yml");
         packetHandler = PacketHandler.of(this, PacketHandler.Manipulator.PROTOCOLLIB, PacketHandler.Priority.HIGHEST);
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            worldGuardHook = new WorldGuardHook();
+            worldGuardHook.register();
+            getLogger().info("WorldGuard detected, WorldGuardHook enabled.");
+        }
     }
 
 

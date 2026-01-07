@@ -3,9 +3,10 @@ main: dev.lumas.biomes.LittleBiomes
 version: '1.0-SNAPSHOT'
 api-version: 1.21
 softdepend:
-  - ProtocolLib
-  - PacketEvents
   - RealisticSeasons
+  - WorldGuard
+depend:
+  - ProtocolLib
 commands:
   littlebiomes:
     description: Main command for LittleBiomes plugin.
