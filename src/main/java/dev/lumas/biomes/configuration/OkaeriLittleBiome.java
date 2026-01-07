@@ -1,6 +1,5 @@
 package dev.lumas.biomes.configuration;
 
-import dev.lumas.biomes.util.ColorUtil;
 import eu.okaeri.configs.OkaeriConfig;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -17,11 +16,9 @@ import dev.lumas.biomes.model.CachedLittleBiomes;
 import dev.lumas.biomes.model.KeyedData;
 import dev.lumas.biomes.model.WorldTiedChunkLocation;
 import dev.lumas.biomes.util.TextUtil;
-import me.outspending.biomesapi.wrapper.environment.AmbientParticle;
+import me.outspending.biomesapi.wrapper.AmbientParticle;
 import me.outspending.biomesapi.wrapper.BiomeSettings;
-import me.outspending.biomesapi.wrapper.environment.GrassColorModifier;
-import me.outspending.biomesapi.wrapper.environment.attribute.WrappedEnvironmentAttributeMap;
-import me.outspending.biomesapi.wrapper.environment.attribute.WrappedEnvironmentAttributes;
+import me.outspending.biomesapi.wrapper.GrassColorModifier;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -48,7 +45,6 @@ public class OkaeriLittleBiome extends OkaeriConfig {
     private String skyColor;
     private String foliageColor;
     private String grassColor;
-    private String cloudColor;
     private GrassColorModifier grassColorModifier;
     private PacketHandler.Priority biomePriority;
     private Map<AmbientParticle, Float> ambientParticles;
@@ -63,10 +59,6 @@ public class OkaeriLittleBiome extends OkaeriConfig {
     }
 
     public boolean register() {
-        WrappedEnvironmentAttributeMap extraAttributes = WrappedEnvironmentAttributeMap.builder()
-                .setAttribute(WrappedEnvironmentAttributes.CLOUD_COLOR, ColorUtil.parseHexColor(cloudColor))
-                .build();
-
         CustomBiome customBiome = CustomBiome.builder()
                 .resourceKey(this.biomeResourceKey())
                 .settings(BiomeSettings.defaultSettings())
@@ -82,7 +74,6 @@ public class OkaeriLittleBiome extends OkaeriConfig {
                                 .map(entry -> BlockReplacement.of(entry.getKey(), entry.getValue()))
                                 .toArray(BlockReplacement[]::new)
                 )
-                .environmentAttributeMap(extraAttributes)
                 .build();
 
         customBiome.register();
@@ -227,7 +218,6 @@ public class OkaeriLittleBiome extends OkaeriConfig {
             config.skyColor = this.color;
             config.foliageColor = this.color;
             config.grassColor = this.color;
-            config.cloudColor = this.color;
             config.grassColorModifier = this.grassColorModifier;
             config.biomePriority = PacketHandler.Priority.NORMAL;
             config.ambientParticles = this.ambientParticles;
