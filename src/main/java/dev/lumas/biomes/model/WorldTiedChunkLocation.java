@@ -1,6 +1,6 @@
 package dev.lumas.biomes.model;
 
-import me.outspending.biomesapi.packet.data.ChunkLocation;
+import me.outspending.biomesapi.renderer.packet.data.ChunkLocation;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
