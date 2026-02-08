@@ -31,7 +31,7 @@ import java.util.Set;
 
 public class BlockListeners implements Listener {
 
-    private static final BiomeUpdater BIOME_UPDATER = BiomeUpdater.of();
+    private static final BiomeUpdater BIOME_UPDATER = BiomeUpdater.of(LittleBiomes.instance());
     private static final BlockData AIR_BLOCK_DATA = Material.AIR.createBlockData();
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

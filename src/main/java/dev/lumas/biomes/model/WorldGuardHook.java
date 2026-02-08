@@ -7,7 +7,6 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import lombok.Getter;
@@ -41,13 +40,7 @@ public class WorldGuardHook {
         RegionQuery regionQuery = regionContainer.createQuery();
         ApplicableRegionSet regionSet = regionQuery.getApplicableRegions(worldEditLocation);
 
-        for (ProtectedRegion region : regionSet) {
-            String flag = region.getFlag(this.littleBiomeFlag);
-            if (flag != null) {
-                return flag;
-            }
-        }
-        return null;
+        return regionSet.queryValue(null, this.littleBiomeFlag);
     }
 
 }

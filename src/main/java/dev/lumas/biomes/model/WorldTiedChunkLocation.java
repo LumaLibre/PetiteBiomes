@@ -5,6 +5,8 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.concurrent.CompletableFuture;
+
 public record WorldTiedChunkLocation(World world, int chunkX, int chunkZ) {
 
     public static WorldTiedChunkLocation of(World world, int chunkX, int chunkZ) {
@@ -19,8 +21,8 @@ public record WorldTiedChunkLocation(World world, int chunkX, int chunkZ) {
         return new WorldTiedChunkLocation(chunk.getWorld(), chunk.getX(), chunk.getZ());
     }
 
-    public Chunk toBukkitChunk() {
-        return world.getChunkAt(chunkX, chunkZ);
+    public CompletableFuture<Chunk> toBukkitChunk() {
+        return world.getChunkAtAsync(chunkX, chunkZ);
     }
 
     public Location toLocation() {

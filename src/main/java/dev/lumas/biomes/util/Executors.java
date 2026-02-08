@@ -4,7 +4,7 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import lombok.NoArgsConstructor;
 import dev.lumas.biomes.LittleBiomes;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.Chunk;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -30,25 +30,14 @@ public final class Executors {
         return Bukkit.getAsyncScheduler().runNow(PLUGIN, consumer);
     }
 
-    // TODO: Better logging
-    public static BukkitTask runAsync(Runnable runnable) {
-        return Bukkit.getScheduler().runTaskAsynchronously(PLUGIN, () -> {
-            try {
-                runnable.run();
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
-
     // Synchronous
 
-    public static BukkitTask delayedSync(long delay, Runnable runnable) {
-        return Bukkit.getScheduler().runTaskLater(PLUGIN, runnable, delay);
+    public static ScheduledTask delayedGlobalSync(long delay, Runnable runnable) {
+        return Bukkit.getGlobalRegionScheduler().runDelayed(PLUGIN, task -> runnable.run(), delay);
     }
 
-    public static BukkitTask sync(Runnable runnable) {
-        return Bukkit.getScheduler().runTask(PLUGIN, () -> {
+    public static ScheduledTask sync(Chunk chunk, Runnable runnable) {
+        return Bukkit.getRegionScheduler().run(PLUGIN, chunk.getWorld(), chunk.getX() >> 4, chunk.getZ() >> 4, (task) -> {
             try {
                 runnable.run();
             } catch (Throwable t) {
@@ -56,14 +45,5 @@ public final class Executors {
             }
         });
     }
-
-    public static void runSync(Runnable runnable) {
-        if (Bukkit.isPrimaryThread()) {
-            runnable.run();
-        } else {
-            sync(runnable);
-        }
-    }
-
 
 }

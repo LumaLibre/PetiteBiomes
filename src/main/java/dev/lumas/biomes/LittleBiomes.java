@@ -50,7 +50,7 @@ public final class LittleBiomes extends JavaPlugin {
     public void onLoad() {
         instance = this;
         okaeriConfig = loadConfig(Config.class, "config.yml");
-        packetHandler = PacketHandler.of(this, PacketHandler.Manipulator.PROTOCOLLIB, PacketHandler.Priority.HIGHEST);
+        packetHandler = PacketHandler.of(this, PacketHandler.Manipulator.PROTOCOLLIB, PacketHandler.Priority.HIGH);
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             worldGuardHook = new WorldGuardHook();
             worldGuardHook.register();
@@ -67,7 +67,7 @@ public final class LittleBiomes extends JavaPlugin {
         getCommand("littlebiomes").setExecutor(new CommandManager());
 
 
-        Executors.delayedSync(1, () -> {
+        Executors.delayedGlobalSync(1, () -> {
             okaeriConfig.littleBiomes().forEach(okaeriLittleBiome -> {
                 try {
                     okaeriLittleBiome.register();
@@ -109,28 +109,30 @@ public final class LittleBiomes extends JavaPlugin {
     private void anchorParticlesTask() {
         Executors.runRepeatingAsync(1, TimeUnit.SECONDS, task -> {
             for (WorldTiedChunkLocation worldTiedChunkLocation : CachedLittleBiomes.INSTANCE.getCachedChunks()) {
-                Chunk chunk = worldTiedChunkLocation.toBukkitChunk();
-                if (!chunk.isLoaded()) {
-                    Executors.sync(() -> {
-                        CachedLittleBiomes.INSTANCE.uncacheChunk(worldTiedChunkLocation);
-                        debug("Uncached chunk at %s in world %s because it was unloaded?".formatted(
-                                worldTiedChunkLocation.chunkX() + "," + worldTiedChunkLocation.chunkZ(),
-                                worldTiedChunkLocation.world().getName()
+                worldTiedChunkLocation.toBukkitChunk().thenAccept(chunk -> {
+                    Executors.sync(chunk, () -> {
+                        if (!chunk.isLoaded()) {
+                            Executors.sync(chunk, () -> {
+                                CachedLittleBiomes.INSTANCE.uncacheChunk(worldTiedChunkLocation);
+                                debug("Uncached chunk at %s in world %s because it was unloaded?".formatted(
+                                        worldTiedChunkLocation.chunkX() + "," + worldTiedChunkLocation.chunkZ(),
+                                        worldTiedChunkLocation.world().getName()
+                                ));
+                            });
+                            return;
+                        }
+
+                        String serializedAnchorLocation = Preconditions.checkNotNull(KeyedData.ANCHOR_BLOCK.get(chunk), "Expected to find anchor block data for chunk (%d, %d) in world %s".formatted(
+                                chunk.getX(), chunk.getZ(), chunk.getWorld().getName()
                         ));
+                        SimpleBlockLocation anchorLocation = SimpleBlockLocation.fromSerialized(serializedAnchorLocation, chunk.getWorld());
+                        Location location = anchorLocation.toLocation().toCenterLocation();
+                        Particle particle = okaeriConfig.anchorParticle();
+                        if (particle != null) {
+                            location.getWorld().spawnParticle(particle, location, 3, 0.3, 0.3, 0.3, 0.01);
+                        }
                     });
-                    continue;
-                }
-
-                String serializedAnchorLocation = Preconditions.checkNotNull(KeyedData.ANCHOR_BLOCK.get(chunk), "Expected to find anchor block data for chunk (%d, %d) in world %s".formatted(
-                        chunk.getX(), chunk.getZ(), chunk.getWorld().getName()
-                ));
-
-                SimpleBlockLocation anchorLocation = SimpleBlockLocation.fromSerialized(serializedAnchorLocation, chunk.getWorld());
-                Location location = anchorLocation.toLocation().toCenterLocation();
-                Particle particle = okaeriConfig.anchorParticle();
-                if (particle != null) {
-                    location.getWorld().spawnParticle(particle, location, 3, 0.3, 0.3, 0.3, 0.01);
-                }
+                });
             }
         });
     }
