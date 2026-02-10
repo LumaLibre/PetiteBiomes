@@ -26,6 +26,7 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -122,9 +123,11 @@ public final class LittleBiomes extends JavaPlugin {
                             return;
                         }
 
-                        String serializedAnchorLocation = Preconditions.checkNotNull(KeyedData.ANCHOR_BLOCK.get(chunk), "Expected to find anchor block data for chunk (%d, %d) in world %s".formatted(
-                                chunk.getX(), chunk.getZ(), chunk.getWorld().getName()
-                        ));
+                        @Nullable String serializedAnchorLocation = KeyedData.ANCHOR_BLOCK.get(chunk);
+                        if (serializedAnchorLocation == null) {
+                            return; // Could have been removed.
+                        }
+
                         SimpleBlockLocation anchorLocation = SimpleBlockLocation.fromSerialized(serializedAnchorLocation, chunk.getWorld());
                         Location location = anchorLocation.toLocation().toCenterLocation();
                         Particle particle = okaeriConfig.anchorParticle();
