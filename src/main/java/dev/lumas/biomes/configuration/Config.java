@@ -1,5 +1,6 @@
 package dev.lumas.biomes.configuration;
 
+import dev.lumas.biomes.enums.SimpleParticleData;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import lombok.Getter;
@@ -53,6 +54,21 @@ public class Config extends OkaeriConfig {
                     .ambientParticle(WrappedParticleTypes.HAPPY_VILLAGER, 0.01f)
                     .blockReplacement(Material.OAK_LEAVES, Material.JUNGLE_LEAVES)
                     .blockReplacement(Material.ICE, Material.GREEN_WOOL)
+                    .toOkaeriConfig(),
+            OkaeriLittleBiome.basicBuilder()
+                    .name("basic_purple")
+                    .anchorMaterial(Material.ANVIL)
+                    .anchorDisplayName("<b><#C7B2F1>Basic Purple Biome Anchor")
+                    .anchorLore(List.of(
+                            "<gray>A simple biome that's purple",
+                            "<gray>everywhere.",
+                            "",
+                            "<gray>Place to change all nearby",
+                            "<gray>chunks to this biome!"
+                    ))
+                    .color("#C7B2F1")
+                    .ambientParticle(WrappedParticleTypes.DUST, 0.01f)
+                    .ambientParticleData(SimpleParticleData.DUST, "#C7B2F1")
                     .toOkaeriConfig()
     );
 

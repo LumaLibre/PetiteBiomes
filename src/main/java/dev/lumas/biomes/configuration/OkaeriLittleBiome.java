@@ -1,5 +1,6 @@
 package dev.lumas.biomes.configuration;
 
+import dev.lumas.biomes.enums.SimpleParticleData;
 import dev.lumas.biomes.model.WorldGuardHook;
 import eu.okaeri.configs.OkaeriConfig;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import me.outspending.biomesapi.renderer.packet.data.PhonyCustomBiome;
 import me.outspending.biomesapi.wrapper.BiomeSettings;
 import me.outspending.biomesapi.wrapper.environment.GrassColorModifier;
 import me.outspending.biomesapi.wrapper.environment.particle.ParticleCatalog;
+import me.outspending.biomesapi.wrapper.environment.particle.ParticleData;
 import me.outspending.biomesapi.wrapper.environment.particle.WrappedParticleTypes;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -50,6 +52,7 @@ public class OkaeriLittleBiome extends OkaeriConfig {
     private GrassColorModifier grassColorModifier;
     private PacketHandler.Priority biomePriority;
     private Map<WrappedParticleTypes, Float> ambientParticles;
+    private Map<SimpleParticleData, String> ambientParticleData;
     private Map<Material, Material> blockReplacements;
 
     public BiomeResourceKey biomeResourceKey() {
@@ -61,21 +64,19 @@ public class OkaeriLittleBiome extends OkaeriConfig {
     }
 
     public boolean register() {
-        ParticleCatalog.Builder particleCatalog = ParticleCatalog.builder();
-        for (var entry : ambientParticles.entrySet()) {
-            particleCatalog.addSimple(entry.getKey(), entry.getValue());
-        }
+        ParticleCatalog particleCatalog = createParticleCatalog();
 
         CustomBiome customBiome = CustomBiome.builder()
                 .resourceKey(this.biomeResourceKey())
                 .settings(BiomeSettings.defaultSettings())
                 .fogColor(fogColor)
                 .foliageColor(foliageColor)
+                .dryFoliageColor(foliageColor)
                 .skyColor(skyColor)
                 .waterColor(waterColor)
                 .waterFogColor(waterFogColor)
                 .grassColor(grassColor)
-                .particleCatalog(particleCatalog.build())
+                .particleCatalog(particleCatalog)
                 .blockReplacements(
                         blockReplacements.entrySet().stream()
                                 .map(entry -> BlockReplacement.of(entry.getKey(), entry.getValue()))
@@ -89,22 +90,20 @@ public class OkaeriLittleBiome extends OkaeriConfig {
     }
 
     public boolean modify() {
-        ParticleCatalog.Builder particleCatalog = ParticleCatalog.builder();
-        for (var entry : ambientParticles.entrySet()) {
-            particleCatalog.addSimple(entry.getKey(), entry.getValue());
-        }
+        ParticleCatalog particleCatalog = createParticleCatalog();
 
         CustomBiome customBiome = CustomBiome.builder()
                 .resourceKey(this.biomeResourceKey())
                 .settings(BiomeSettings.defaultSettings())
                 .fogColor(fogColor)
                 .foliageColor(foliageColor)
+                .dryFoliageColor(foliageColor)
                 .skyColor(skyColor)
                 .waterColor(waterColor)
                 .waterFogColor(waterFogColor)
                 .grassColor(grassColor)
                 .grassColorModifier(grassColorModifier)
-                .particleCatalog(particleCatalog.build())
+                .particleCatalog(particleCatalog)
                 .blockReplacements(
                         blockReplacements.entrySet().stream()
                                 .map(entry -> BlockReplacement.of(entry.getKey(), entry.getValue()))
@@ -177,6 +176,25 @@ public class OkaeriLittleBiome extends OkaeriConfig {
     }
 
 
+    private ParticleCatalog createParticleCatalog() {
+        ParticleCatalog.Builder particleCatalog = ParticleCatalog.builder();
+        for (var entry : ambientParticles.entrySet()) {
+            WrappedParticleTypes wrappedType = entry.getKey();
+            float probability = entry.getValue();
+            if (wrappedType.isSimple()) {
+                particleCatalog.addSimple(wrappedType, probability);
+            } else {
+                SimpleParticleData simpleParticleData = SimpleParticleData.fromParticleData(wrappedType.getParticleDataClass());
+                String context = ambientParticleData.get(simpleParticleData);
+                ParticleData<?> converted = simpleParticleData.create(context);
+
+                particleCatalog.addComplex(wrappedType, probability, converted);
+            }
+        }
+        return particleCatalog.build();
+    }
+
+
 
     public static BasicBuilder basicBuilder() {
         return new BasicBuilder();
@@ -190,6 +208,7 @@ public class OkaeriLittleBiome extends OkaeriConfig {
         private String color;
         private GrassColorModifier grassColorModifier = GrassColorModifier.NONE;
         private Map<WrappedParticleTypes, Float> ambientParticles = new HashMap<>();
+        private Map<SimpleParticleData, String> ambientParticleData = new HashMap<>();
         private Map<Material, Material> blockReplacements = new HashMap<>();
 
 
@@ -218,8 +237,13 @@ public class OkaeriLittleBiome extends OkaeriConfig {
             return this;
         }
 
-        public BasicBuilder ambientParticle(WrappedParticleTypes particle, float density) {
-            this.ambientParticles.put(particle, density);
+        public BasicBuilder ambientParticle(WrappedParticleTypes particle, float probability) {
+            this.ambientParticles.put(particle, probability);
+            return this;
+        }
+
+        public BasicBuilder ambientParticleData(SimpleParticleData particleData, String context) {
+            this.ambientParticleData.put(particleData, context);
             return this;
         }
 
@@ -244,6 +268,7 @@ public class OkaeriLittleBiome extends OkaeriConfig {
             config.grassColorModifier = this.grassColorModifier;
             config.biomePriority = PacketHandler.Priority.NORMAL;
             config.ambientParticles = this.ambientParticles;
+            config.ambientParticleData = this.ambientParticleData;
             config.blockReplacements = this.blockReplacements;
             return config;
         }
