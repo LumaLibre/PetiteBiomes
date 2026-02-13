@@ -33,8 +33,6 @@ public class PlacedLittleBiome {
         Chunk chunk = block.getChunk();
         SimpleBlockLocation simpleBlockLocation = SimpleBlockLocation.of(chunk.getWorld(), block.getX(), block.getY(), block.getZ());
 
-        System.out.println(chunk.getPersistentDataContainer().getKeys());
-
         Preconditions.checkState(!KeyedData.CHUNK_BIOME.matches(chunk),
                 "Chunk at (%d, %d) in world %s already has a little biome assigned.".formatted(
                         chunk.getX(), chunk.getZ(), chunk.getWorld().getName()
