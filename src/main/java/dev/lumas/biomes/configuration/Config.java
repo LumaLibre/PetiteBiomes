@@ -30,6 +30,10 @@ public class Config extends OkaeriConfig {
     @Comment("Particle effect to display around little biome anchors.")
     private Particle anchorParticle = Particle.WITCH;
 
+
+    @Comment("Cooldown to break an anchor in seconds. Set to <= 0 to disable.")
+    private int anchorBreakCooldown = 3;
+
     @Comment({
             "Defined little biomes. There's lots to configure!",
             "Use: /littlebiomes reload to reload the config after making changes.",
