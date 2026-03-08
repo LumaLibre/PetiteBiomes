@@ -20,7 +20,7 @@ repositories {
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:5.0.5")
-    implementation("me.outspending.biomesapi:BiomesAPI:1.2.0-be6aa6a")
+    implementation("me.outspending.biomesapi:BiomesAPI:1.2.0-a9e66a9")
 
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-beta1")
 
