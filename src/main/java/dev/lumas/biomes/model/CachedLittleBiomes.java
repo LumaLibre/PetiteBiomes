@@ -6,12 +6,13 @@ import dev.lumas.biomes.LittleBiomes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class CachedLittleBiomes {
 
     public static CachedLittleBiomes INSTANCE = new CachedLittleBiomes();
 
-    private final Map<WorldTiedChunkLocation, BiomeResourceKey> cachedChunkLocations = new HashMap<>();
+    private final Map<WorldTiedChunkLocation, BiomeResourceKey> cachedChunkLocations = new ConcurrentHashMap<>();
 
     public boolean isChunkCached(WorldTiedChunkLocation location) {
         return cachedChunkLocations.containsKey(location);
