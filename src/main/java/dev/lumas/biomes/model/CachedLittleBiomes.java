@@ -3,7 +3,6 @@ package dev.lumas.biomes.model;
 import me.outspending.biomesapi.registry.BiomeResourceKey;
 import dev.lumas.biomes.LittleBiomes;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

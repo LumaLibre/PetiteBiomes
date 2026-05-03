@@ -2,7 +2,7 @@ plugins {
     id("java")
     id("com.gradleup.shadow") version "9.3.0"
     id("io.freefair.lombok") version "9.1.0"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.1"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
 }
 
@@ -20,7 +20,7 @@ repositories {
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:5.0.5")
-    implementation("me.outspending.biomesapi:BiomesAPI:1.2.0-a9e66a9")
+    implementation("me.outspending.biomesapi:BiomesAPI:2.1.0-bab282f")
 
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-beta1")
 
@@ -50,7 +50,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion("26.1.2")
         downloadPlugins {
             modrinth("plugmanx", "3.0.2")
         }
@@ -60,5 +60,5 @@ tasks {
 
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
