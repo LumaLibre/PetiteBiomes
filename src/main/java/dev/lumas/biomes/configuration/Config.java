@@ -5,13 +5,13 @@ import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.outspending.biomesapi.wrapper.environment.attribute.WrappedEnvironmentAttributes;
 import me.outspending.biomesapi.wrapper.environment.particle.WrappedParticleTypes;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -48,6 +48,7 @@ public class Config extends OkaeriConfig {
                     .color("#6F8BEA")
                     .ambientParticle(WrappedParticleTypes.END_ROD, 0.01f)
                     .blockReplacement(Material.BIRCH_LEAVES, Material.ACACIA_LEAVES)
+                    .environmentAttribute(WrappedEnvironmentAttributes.BLOCK_LIGHT_TINT, "#FF10F0")
                     .toOkaeriConfig(),
             OkaeriLittleBiome.basicBuilder()
                     .name("basic_green")

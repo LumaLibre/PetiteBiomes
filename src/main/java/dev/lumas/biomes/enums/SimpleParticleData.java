@@ -15,7 +15,7 @@ public enum SimpleParticleData {
     BLOCK(Material.class, BlockParticle.class, BlockParticle::of),
     COLOR(String.class, ColorParticle.class, ColorParticle::of),
     DUST(String.class, DustParticle.class, DustParticle::of),
-    DUST_TRANSITION(String.class, DustTransitionParticle.class, (ctx) -> {
+    DUST_TRANSITION(String.class, DustTransitionParticle.class, ctx -> {
         String[] colors = ctx.split(",");
         if (colors.length != 2) {
             throw new IllegalArgumentException("Invalid dust transition particle data: " + ctx);

@@ -1,6 +1,8 @@
 package dev.lumas.biomes;
 
 import com.google.common.base.Preconditions;
+import dev.lumas.biomes.configuration.serdes.EnumTransformers;
+import dev.lumas.biomes.enums.SimpleParticleData;
 import dev.lumas.biomes.model.WorldGuardHook;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.OkaeriConfig;
@@ -20,8 +22,11 @@ import dev.lumas.biomes.model.WorldTiedChunkLocation;
 import dev.lumas.biomes.util.Executors;
 import me.outspending.biomesapi.registry.BiomeResourceKey;
 import me.outspending.biomesapi.renderer.packet.PacketHandler;
+import me.outspending.biomesapi.wrapper.environment.GrassColorModifier;
+import me.outspending.biomesapi.wrapper.environment.particle.WrappedParticleTypes;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -51,7 +56,7 @@ public final class LittleBiomes extends JavaPlugin {
     public void onLoad() {
         instance = this;
         okaeriConfig = loadConfig(Config.class, "config.yml");
-        packetHandler = PacketHandler.of(this, PacketHandler.Manipulator.PROTOCOLLIB, PacketHandler.Priority.HIGH);
+        packetHandler = PacketHandler.of(this, PacketHandler.Injector.PROTOCOLLIB, PacketHandler.Priority.HIGH);
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             worldGuardHook = new WorldGuardHook();
             worldGuardHook.register();
@@ -95,7 +100,15 @@ public final class LittleBiomes extends JavaPlugin {
     public <T extends OkaeriConfig> T loadConfig(Class<T> configClass, String fileName) {
         Path bindFile = this.getDataPath().resolve(fileName);
         return ConfigManager.create(configClass, it -> {
-            it.withConfigurer(new YamlBukkitConfigurer(), new StandardSerdes());
+            it.withConfigurer(new YamlBukkitConfigurer(), registry -> {
+                registry.register(new StandardSerdes());
+                registry.register(EnumTransformers.lowercase(Material.class));
+                registry.register(EnumTransformers.lowercase(Particle.class));
+                registry.register(EnumTransformers.lowercase(WrappedParticleTypes.class));
+                registry.register(EnumTransformers.lowercase(GrassColorModifier.class));
+                registry.register(EnumTransformers.lowercase(PacketHandler.Priority.class));
+                registry.register(EnumTransformers.lowercase(SimpleParticleData.class));
+            });
             it.withRemoveOrphans(false);
             it.withBindFile(bindFile);
 
