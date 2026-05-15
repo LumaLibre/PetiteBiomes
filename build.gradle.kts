@@ -45,7 +45,7 @@ tasks {
     shadowJar {
         val shaded = "dev.lumas.biomes.shaded"
         relocate("eu.okaeri", "$shaded.okaeri")
-        relocate("me.outspending", "$shaded.biomesapi")
+        relocate("me.outspending.biomesapi", "$shaded.biomesapi")
         archiveClassifier.set("")
     }
 
